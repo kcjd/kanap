@@ -13,9 +13,12 @@ const productId = url.searchParams.get('id');
 
 // Get product data from API
 const getProduct = async (id) => {
-  const response = await fetch(`http://localhost:3000/api/products/${id}`);
-  if (!response.ok) throw new Error(`${response.status} : ${response.statusText}`);
-  return response.json();
+  try {
+    const response = await fetch(`http://localhost:3000/api/products/${id}`);
+    return response.json();
+  } catch {
+    throw Error('Le serveur ne répond pas');
+  }
 };
 
 // Show product details on page

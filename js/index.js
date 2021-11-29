@@ -3,9 +3,12 @@ const container = document.querySelector('#items');
 
 // Get products data from API
 const getProducts = async () => {
-  const response = await fetch('http://localhost:3000/api/products');
-  if (!response.ok) throw new Error(`${response.status} : ${response.statusText}`);
-  return response.json();
+  try {
+    const response = await fetch('http://localhost:3000/api/products');
+    return response.json();
+  } catch {
+    throw Error('Le serveur ne répond pas');
+  }
 };
 
 // Render product cart HTML
