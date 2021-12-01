@@ -9,7 +9,10 @@ const addButton = document.querySelector('#addToCart');
 
 // Get product ID from URL
 const url = new URL(window.location.href);
-const productId = url.searchParams.get('id');
+const productId = url.searchParams.get('id') || null;
+
+// Get cart from local storage
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Get product data from API
 const getProduct = async (id) => {
@@ -25,6 +28,9 @@ const getProduct = async (id) => {
 const showProductDetails = async () => {
   try {
     const product = await getProduct(productId);
+    const isProductFound = Object.keys(product).length > 0;
+
+    if (!isProductFound) throw Error("Le produit demandé n'existe pas");
 
     document.title = product.name;
     productImage.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
@@ -41,11 +47,10 @@ const showProductDetails = async () => {
 
 // Add a new item to cart or update an existing one
 const addCartItem = ({ id, color, quantity }) => {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const index = cart.findIndex((i) => i.id === id && i.color === color);
+  const index = cart.findIndex((i) => i._id === id && i.color === color);
 
   if (index !== -1) cart[index].quantity = quantity;
-  else cart.push({ id, color, quantity });
+  else cart.push({ _id: id, color, quantity });
 
   localStorage.setItem('cart', JSON.stringify(cart));
 };
@@ -55,7 +60,15 @@ const handleAddButton = () => {
   const color = colorsSelect.value;
   const quantity = +quantityInput.value;
 
-  if (!color || quantity < 1 || quantity > 100) return;
+  if (!color) {
+    console.error('Veuillez sélectionner une couleur');
+    return;
+  }
+
+  if (quantity < 1 || quantity > 100) {
+    console.error('Veuillez sélectionner une quantité comprise entre 1 et 100');
+    return;
+  }
 
   addCartItem({ id: productId, color, quantity });
 };
