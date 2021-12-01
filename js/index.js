@@ -11,8 +11,8 @@ const getProducts = async () => {
   }
 };
 
-// Render product cart HTML
-const renderProductCard = ({ _id, name, description, imageUrl, altTxt }) => `
+// Create product thumb element
+const createProductThumb = ({ _id, name, description, imageUrl, altTxt }) => `
   <a href="./product.html?id=${_id}">
     <article>
       <img src=${imageUrl} alt=${altTxt}>
@@ -22,16 +22,16 @@ const renderProductCard = ({ _id, name, description, imageUrl, altTxt }) => `
   </a>
 `;
 
-// Show products on page
-const showProducts = async () => {
+// Display product list
+const displayProductList = async () => {
   try {
     const products = await getProducts();
-    const productCards = products.map(renderProductCard).join(' ');
-    container.innerHTML = productCards;
+    const productThumbs = products.map(createProductThumb).join(' ');
+    container.innerHTML = productThumbs;
   } catch (error) {
     console.error(error.message);
   }
 };
 
 // Events
-document.addEventListener('DOMContentLoaded', showProducts);
+document.addEventListener('DOMContentLoaded', displayProductList);

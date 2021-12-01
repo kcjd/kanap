@@ -1,7 +1,7 @@
 // DOM elements
 const container = document.querySelector('#cart__items');
-const cartQuantity = document.querySelector('#totalQuantity');
-const cartPrice = document.querySelector('#totalPrice');
+const totalQuantity = document.querySelector('#totalQuantity');
+const totalPrice = document.querySelector('#totalPrice');
 
 // Get cart from local storage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -38,13 +38,13 @@ const editCartItemQuantity = ({ id, color, quantity }) => {
   localStorage.setItem('cart', JSON.stringify(cartStorage));
 };
 
-// Show cart total on page
-const showCartTotal = () => {
-  const totalQuantity = cart.reduce((total, i) => total + i.quantity, 0);
-  cartQuantity.textContent = `${totalQuantity} ${totalQuantity <= 1 ? 'article' : 'articles'}`;
+// Display cart total
+const displayCartTotal = () => {
+  const quantity = cart.reduce((total, i) => total + i.quantity, 0);
+  totalQuantity.textContent = `${quantity} ${quantity <= 1 ? 'article' : 'articles'}`;
 
-  const totalPrice = cart.reduce((total, i) => total + i.price * i.quantity, 0);
-  cartPrice.textContent = totalPrice;
+  const price = cart.reduce((total, i) => total + i.price * i.quantity, 0);
+  totalPrice.textContent = price;
 };
 
 // Get selected item then delete it from cart
@@ -55,7 +55,7 @@ const handleDeleteButton = (e) => {
   selectedItem.remove();
 
   deleteCartItem({ id, color });
-  showCartTotal();
+  displayCartTotal();
 };
 
 // Get selected item and new quantity then update it in cart
@@ -67,11 +67,11 @@ const handleQuantityInput = (e) => {
   e.target.previousElementSibling.textContent = `Qté : ${quantity}`;
 
   editCartItemQuantity({ id, color, quantity });
-  showCartTotal();
+  displayCartTotal();
 };
 
-// Render cart item HTML
-const renderCartItem = ({ _id, name, color, price, quantity, imageUrl, altTxt }) => `
+// Create cart item element
+const createCartItem = ({ _id, name, color, price, quantity, imageUrl, altTxt }) => `
   <article class="cart__item" data-id="${_id}" data-color="${color}">
     <div class="cart__item__img">
       <img src=${imageUrl} alt=${altTxt}>
@@ -96,13 +96,13 @@ const renderCartItem = ({ _id, name, color, price, quantity, imageUrl, altTxt })
 `;
 
 // Show cart items on page
-const showCart = async () => {
+const displayCart = async () => {
   try {
     cart = await Promise.all(cart.map(async (item) => getCartItemData(item)));
 
-    container.innerHTML = cart.map(renderCartItem).join(' ');
+    container.innerHTML = cart.map(createCartItem).join(' ');
 
-    showCartTotal();
+    displayCartTotal();
 
     const deleteButtons = document.querySelectorAll('.deleteItem');
     deleteButtons.forEach((button) => button.addEventListener('click', handleDeleteButton));
@@ -115,4 +115,4 @@ const showCart = async () => {
 };
 
 // Events
-document.addEventListener('DOMContentLoaded', showCart);
+document.addEventListener('DOMContentLoaded', displayCart);

@@ -3,7 +3,7 @@ const productImage = document.querySelector('.item__img');
 const productName = document.querySelector('#title');
 const productPrice = document.querySelector('#price');
 const productDesc = document.querySelector('#description');
-const colorsSelect = document.querySelector('#colors');
+const colorSelect = document.querySelector('#colors');
 const quantityInput = document.querySelector('#quantity');
 const addButton = document.querySelector('#addToCart');
 
@@ -24,8 +24,8 @@ const getProduct = async (id) => {
   }
 };
 
-// Show product details on page
-const showProductDetails = async () => {
+// Display product details
+const displayProductDetails = async () => {
   try {
     const product = await getProduct(productId);
     const isProductFound = Object.keys(product).length > 0;
@@ -39,7 +39,7 @@ const showProductDetails = async () => {
     productDesc.textContent = product.description;
 
     const colorOptions = product.colors.map((color) => `<option value=${color}>${color}</option>`).join(' ');
-    colorsSelect.insertAdjacentHTML('beforeend', colorOptions);
+    colorSelect.insertAdjacentHTML('beforeend', colorOptions);
   } catch (error) {
     console.error(error.message);
   }
@@ -57,7 +57,7 @@ const addCartItem = ({ id, color, quantity }) => {
 
 // Get and validate user selection then add product to cart
 const handleAddButton = () => {
-  const color = colorsSelect.value;
+  const color = colorSelect.value;
   const quantity = +quantityInput.value;
 
   if (!color) {
@@ -74,5 +74,5 @@ const handleAddButton = () => {
 };
 
 // Events
-document.addEventListener('DOMContentLoaded', showProductDetails);
+document.addEventListener('DOMContentLoaded', displayProductDetails);
 addButton.addEventListener('click', handleAddButton);
