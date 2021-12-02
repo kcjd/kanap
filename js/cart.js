@@ -2,6 +2,11 @@
 const container = document.querySelector('#cart__items');
 const totalQuantity = document.querySelector('#totalQuantity');
 const totalPrice = document.querySelector('#totalPrice');
+const firstNameInput = document.querySelector('#firstName');
+const lastNameInput = document.querySelector('#lastName');
+const addressInput = document.querySelector('#address');
+const cityInput = document.querySelector('#city');
+const emailInput = document.querySelector('#email');
 
 // Get cart from local storage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -114,5 +119,42 @@ const displayCart = async () => {
   }
 };
 
+// Input validation rules
+const validation = {
+  letters: {
+    regex: /^[A-Za-zÀ-ÿ-' ]{3,}$/g,
+    message: 'Min. 3 caractères, lettres uniquement',
+  },
+  lettersDigits: {
+    regex: /^[0-9A-Za-zÀ-ÿ-', ]{3,}$/g,
+    message: 'Min. 3 caractères, chiffres et lettres uniquement',
+  },
+  email: {
+    regex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+    message: 'Adresse email non valide',
+  },
+};
+
+// Validate an input and show message if error
+const validateInput = (e, rule) => {
+  const input = e.target;
+  const value = input.value.trim();
+  const inputError = input.nextElementSibling;
+
+  if (!value.match(rule.regex)) {
+    input.dataset.error = true;
+    inputError.textContent = rule.message;
+    return;
+  }
+
+  delete input.dataset.error;
+  inputError.textContent = '';
+};
+
 // Events
 document.addEventListener('DOMContentLoaded', displayCart);
+firstNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
+lastNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
+addressInput.addEventListener('input', (e) => validateInput(e, validation.lettersDigits));
+cityInput.addEventListener('input', (e) => validateInput(e, validation.letters));
+emailInput.addEventListener('input', (e) => validateInput(e, validation.email));
