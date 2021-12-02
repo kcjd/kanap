@@ -14,7 +14,7 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 // Get product data from API
 const getProduct = async (id) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/products/${id}`);
+    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
     return response.json();
   } catch {
     throw Error('Le serveur ne répond pas');

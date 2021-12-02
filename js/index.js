@@ -4,7 +4,7 @@ const container = document.querySelector('#items');
 // Get products data from API
 const getProducts = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/products');
+    const response = await fetch('https://kanap-back.herokuapp.com/api/products');
     return response.json();
   } catch {
     throw Error('Le serveur ne répond pas');
