@@ -2,6 +2,7 @@
 const container = document.querySelector('#cart__items');
 const totalQuantity = document.querySelector('#totalQuantity');
 const totalPrice = document.querySelector('#totalPrice');
+const orderForm = document.querySelector('.cart__order__form');
 const firstNameInput = document.querySelector('#firstName');
 const lastNameInput = document.querySelector('#lastName');
 const addressInput = document.querySelector('#address');
@@ -125,6 +126,61 @@ const displayCart = async () => {
   }
 };
 
+// Post an order to API
+const postOrder = async (order) => {
+  try {
+    const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order),
+    });
+    return response.json();
+  } catch {
+    throw Error('Le serveur ne répond pas');
+  }
+};
+
+// Get product IDs from cart and contact information from user input
+const getOrderData = () => {
+  const products = cart.map((i) => i._id);
+  const contact = {
+    firstName: firstNameInput.value.trim(),
+    lastName: lastNameInput.value.trim(),
+    address: addressInput.value.trim(),
+    city: cityInput.value.trim(),
+    email: emailInput.value.trim(),
+  };
+  return { products, contact };
+};
+
+// Send order then redirect to confirmation page
+const sendOrder = async () => {
+  try {
+    const orderData = getOrderData();
+
+    if (orderData.products.length < 1) throw Error('Votre panier est vide');
+
+    const { orderId } = await postOrder(orderData);
+
+    localStorage.removeItem('cart');
+    window.location.replace(`confirmation.html?order=${orderId}`);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+// Validate form then send order
+const handleOrderForm = (e) => {
+  e.preventDefault();
+
+  const inputs = Array.from(e.target.querySelectorAll('input:not([type=submit])'));
+  const hasErrors = inputs.map((i) => Boolean(i.dataset.error)).includes(true);
+
+  if (hasErrors) return;
+
+  sendOrder();
+};
+
 // Input validation rules
 const validation = {
   letters: {
@@ -159,6 +215,7 @@ const validateInput = (e, rule) => {
 
 // Events
 document.addEventListener('DOMContentLoaded', displayCart);
+orderForm.addEventListener('submit', handleOrderForm);
 firstNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
 lastNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
 addressInput.addEventListener('input', (e) => validateInput(e, validation.lettersDigits));
