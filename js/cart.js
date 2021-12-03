@@ -45,10 +45,16 @@ const editCartItemQuantity = ({ id, color, quantity }) => {
 
 // Display cart total
 const displayCartTotal = () => {
-  const quantity = cart.reduce((total, i) => total + i.quantity, 0);
-  totalQuantity.textContent = `${quantity} ${quantity <= 1 ? 'article' : 'articles'}`;
+  const { quantity, price } = cart.reduce(
+    (total, i) => ({
+      ...total,
+      quantity: total.quantity + i.quantity,
+      price: total.price + i.price * i.quantity,
+    }),
+    { quantity: 0, price: 0 },
+  );
 
-  const price = cart.reduce((total, i) => total + i.price * i.quantity, 0);
+  totalQuantity.textContent = `${quantity} ${quantity <= 1 ? 'article' : 'articles'}`;
   totalPrice.textContent = price;
 };
 
