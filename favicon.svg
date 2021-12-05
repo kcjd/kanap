@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#083B4D;}
+	.st1{fill:#FFFFFF;}
+	@media (prefers-color-scheme: dark) {
+		.st0{fill:#FFFFFF;}
+		.st1{fill:#083B4D;}
+	}
+</style>
+<g>
+	<path class="st0" d="M52,64H12C5.4,64,0,58.6,0,52V12C0,5.4,5.4,0,12,0h40c6.6,0,12,5.4,12,12v40C64,58.6,58.6,64,52,64z"/>
+</g>
+<g>
+	<path class="st1" d="M29.8,35l-3.8,3.9V46h-6.4V18h6.4v13.1L38.5,18h7.2L34.1,30.5L46.4,46h-7.6L29.8,35z"/>
+</g>
+</svg>
