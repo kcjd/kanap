@@ -14,12 +14,9 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Get product data from API
 const getProduct = async (id) => {
-  try {
-    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
-    return response.json();
-  } catch {
-    throw Error('Le serveur ne répond pas');
-  }
+  const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
+  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
+  return response.json();
 };
 
 // Get cart item with product data
@@ -128,16 +125,13 @@ const displayCart = async () => {
 
 // Post an order to API
 const postOrder = async (order) => {
-  try {
-    const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order),
-    });
-    return response.json();
-  } catch {
-    throw Error('Le serveur ne répond pas');
-  }
+  const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(order),
+  });
+  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
+  return response.json();
 };
 
 // Get product IDs from cart and contact information from user input

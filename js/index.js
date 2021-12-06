@@ -3,12 +3,9 @@ const container = document.querySelector('#items');
 
 // Get products data from API
 const getProducts = async () => {
-  try {
-    const response = await fetch('https://kanap-back.herokuapp.com/api/products');
-    return response.json();
-  } catch {
-    throw Error('Le serveur ne répond pas');
-  }
+  const response = await fetch('https://kanap-back.herokuapp.com/api/products');
+  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
+  return response.json();
 };
 
 // Create product thumb element

@@ -16,21 +16,15 @@ const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Get product data from API
 const getProduct = async (id) => {
-  try {
-    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
-    return response.json();
-  } catch {
-    throw Error('Le serveur ne répond pas');
-  }
+  const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
+  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
+  return response.json();
 };
 
 // Display product details
 const displayProductDetails = async () => {
   try {
     const product = await getProduct(productId);
-    const isProductFound = Object.keys(product).length > 0;
-
-    if (!isProductFound) throw Error("Le produit demandé n'existe pas");
 
     document.title = product.name;
     productImage.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
