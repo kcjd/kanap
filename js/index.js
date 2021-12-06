@@ -26,7 +26,7 @@ const displayProductList = async () => {
     const productThumbs = products.map(createProductThumb).join(' ');
     container.innerHTML = productThumbs;
   } catch (error) {
-    console.error(error.message);
+    container.innerHTML = `<p class="alert">${error.message}</p>`;
   }
 };
 

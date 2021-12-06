@@ -1,4 +1,5 @@
 // DOM elements
+const container = document.querySelector('.item');
 const productImage = document.querySelector('.item__img');
 const productName = document.querySelector('#title');
 const productPrice = document.querySelector('#price');
@@ -35,7 +36,8 @@ const displayProductDetails = async () => {
     const colorOptions = product.colors.map((color) => `<option value=${color}>${color}</option>`).join(' ');
     colorSelect.insertAdjacentHTML('beforeend', colorOptions);
   } catch (error) {
-    console.error(error.message);
+    document.title = error.message;
+    container.innerHTML = `<p class="alert">${error.message}</p>`;
   }
 };
 
@@ -55,12 +57,12 @@ const handleAddButton = () => {
   const quantity = +quantityInput.value;
 
   if (!color) {
-    console.error('Veuillez sélectionner une couleur');
+    alert('Attention, vous devez sélectionner une couleur');
     return;
   }
 
   if (quantity < 1 || quantity > 100) {
-    console.error('Veuillez sélectionner une quantité comprise entre 1 et 100');
+    alert('Attention, vous devez sélectionner une quantité valide (1-100)');
     return;
   }
 

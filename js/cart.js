@@ -71,7 +71,7 @@ const handleDeleteButton = (e) => {
 const handleQuantityInput = (e) => {
   const selectedItem = e.target.closest('[data-id]');
   const { id, color } = selectedItem.dataset;
-  const quantity = +e.target.value;
+  const quantity = Math.min(Math.max(+e.target.value, 1), 100);
 
   e.target.previousElementSibling.textContent = `Qté : ${quantity}`;
 
@@ -119,7 +119,7 @@ const displayCart = async () => {
     const quantityInputs = document.querySelectorAll('.itemQuantity');
     quantityInputs.forEach((input) => input.addEventListener('input', handleQuantityInput));
   } catch (error) {
-    console.error(error.message);
+    container.innerHTML = `<p class="alert">${error.message}</p>`;
   }
 };
 
@@ -150,16 +150,16 @@ const getOrderData = () => {
 // Send order then redirect to confirmation page
 const sendOrder = async () => {
   try {
-    const orderData = getOrderData();
+    const order = getOrderData();
 
-    if (orderData.products.length < 1) throw Error('Votre panier est vide');
+    if (order.products.length < 1) throw Error('Attention, votre panier doit contenir au moins 1 article');
 
-    const { orderId } = await postOrder(orderData);
+    const { orderId } = await postOrder(order);
 
     localStorage.removeItem('cart');
     window.location.replace(`confirmation.html?order=${orderId}`);
   } catch (error) {
-    console.error(error.message);
+    alert(error.message);
   }
 };
 
@@ -179,11 +179,11 @@ const handleOrderForm = (e) => {
 const validation = {
   letters: {
     regex: /^[A-Za-zÀ-ÿ-' ]{3,}$/g,
-    message: 'Min. 3 caractères, lettres uniquement',
+    message: 'Minimum 3 caractères, lettres uniquement',
   },
   lettersDigits: {
     regex: /^[0-9A-Za-zÀ-ÿ-', ]{3,}$/g,
-    message: 'Min. 3 caractères, chiffres et lettres uniquement',
+    message: 'Minimum 3 caractères, chiffres et lettres uniquement',
   },
   email: {
     regex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
