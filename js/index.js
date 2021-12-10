@@ -3,9 +3,13 @@ const container = document.querySelector('#items');
 
 // Get products data from API
 const getProducts = async () => {
-  const response = await fetch('https://kanap-back.herokuapp.com/api/products');
-  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
-  return response.json();
+  try {
+    const response = await fetch('https://kanap-back.herokuapp.com/api/products');
+    if (!response.ok) throw response;
+    return response.json();
+  } catch (e) {
+    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
+  }
 };
 
 // Create product thumb element
@@ -25,8 +29,8 @@ const displayProductList = async () => {
     const products = await getProducts();
     const productThumbs = products.map(createProductThumb).join(' ');
     container.innerHTML = productThumbs;
-  } catch (error) {
-    container.innerHTML = `<p class="alert">${error.message}</p>`;
+  } catch (e) {
+    container.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
 

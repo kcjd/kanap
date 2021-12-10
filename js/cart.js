@@ -14,9 +14,13 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Get product data from API
 const getProduct = async (id) => {
-  const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
-  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
-  return response.json();
+  try {
+    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
+    if (!response.ok) throw response;
+    return response.json();
+  } catch (e) {
+    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
+  }
 };
 
 // Get cart item with product data
@@ -118,20 +122,24 @@ const displayCart = async () => {
 
     const quantityInputs = document.querySelectorAll('.itemQuantity');
     quantityInputs.forEach((input) => input.addEventListener('input', handleQuantityInput));
-  } catch (error) {
-    container.innerHTML = `<p class="alert">${error.message}</p>`;
+  } catch (e) {
+    container.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
 
 // Post an order to API
 const postOrder = async (order) => {
-  const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(order),
-  });
-  if (!response.ok) throw Error(`${response.status} : ${response.statusText}`);
-  return response.json();
+  try {
+    const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order),
+    });
+    if (!response.ok) throw response;
+    return response.json();
+  } catch (e) {
+    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
+  }
 };
 
 // Get product IDs from cart and contact information from user input
@@ -158,8 +166,8 @@ const sendOrder = async () => {
 
     localStorage.removeItem('cart');
     window.location.replace(`confirmation.html?order=${orderId}`);
-  } catch (error) {
-    alert(error.message);
+  } catch (e) {
+    alert(e.message);
   }
 };
 
