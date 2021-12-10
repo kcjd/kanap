@@ -10,5 +10,13 @@ const showOrderId = () => {
   container.textContent = orderId;
 };
 
+// Redirect to home page if no order ID
+const redirectIfNoOrderId = () => {
+  if (!orderId) window.location.replace('/');
+};
+
 // Events
-document.addEventListener('DOMContentLoaded', showOrderId);
+document.addEventListener('DOMContentLoaded', () => {
+  showOrderId();
+  redirectIfNoOrderId();
+});
