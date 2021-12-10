@@ -67,6 +67,7 @@ const handleAddButton = () => {
   }
 
   addCartItem({ id: productId, color, quantity });
+  alert('Le produit a été ajouté au panier');
 };
 
 // Events
