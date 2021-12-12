@@ -1,5 +1,5 @@
 // DOM elements
-const container = document.querySelector('#items');
+const productsElem = document.querySelector('#items');
 
 // Get products data from API
 const getProducts = async () => {
@@ -27,12 +27,11 @@ const createProductThumb = ({ _id, name, description, imageUrl, altTxt }) => `
 const displayProductList = async () => {
   try {
     const products = await getProducts();
-    const productThumbs = products.map(createProductThumb).join(' ');
-    container.innerHTML = productThumbs;
+    const productThumbs = products.map(createProductThumb).join('');
+    productsElem.innerHTML = productThumbs;
   } catch (e) {
-    container.innerHTML = `<p class="alert">${e.message}</p>`;
+    productsElem.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
 
-// Events
-document.addEventListener('DOMContentLoaded', displayProductList);
+displayProductList();

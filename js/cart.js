@@ -1,13 +1,13 @@
 // DOM elements
-const container = document.querySelector('#cart__items');
-const totalQuantity = document.querySelector('#totalQuantity');
-const totalPrice = document.querySelector('#totalPrice');
-const orderForm = document.querySelector('.cart__order__form');
-const firstNameInput = document.querySelector('#firstName');
-const lastNameInput = document.querySelector('#lastName');
-const addressInput = document.querySelector('#address');
-const cityInput = document.querySelector('#city');
-const emailInput = document.querySelector('#email');
+const cartElem = document.querySelector('#cart__items');
+const totalQuantityElem = document.querySelector('#totalQuantity');
+const totalPriceElem = document.querySelector('#totalPrice');
+const orderFormElem = document.querySelector('.cart__order__form');
+const firstNameInputElem = document.querySelector('#firstName');
+const lastNameInputElem = document.querySelector('#lastName');
+const addressInputElem = document.querySelector('#address');
+const cityInputElem = document.querySelector('#city');
+const emailInputElem = document.querySelector('#email');
 
 // Get cart from local storage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -56,16 +56,16 @@ const displayCartTotal = () => {
     { quantity: 0, price: 0 },
   );
 
-  totalQuantity.textContent = `${quantity} ${quantity <= 1 ? 'article' : 'articles'}`;
-  totalPrice.textContent = price;
+  totalQuantityElem.textContent = `${quantity} ${quantity <= 1 ? 'article' : 'articles'}`;
+  totalPriceElem.textContent = price;
 };
 
 // Get selected item then delete it from cart
 const handleDeleteButton = (e) => {
-  const selectedItem = e.target.closest('[data-id]');
-  const { id, color } = selectedItem.dataset;
+  const selectedItemElem = e.target.closest('[data-id]');
+  const { id, color } = selectedItemElem.dataset;
 
-  selectedItem.remove();
+  selectedItemElem.remove();
 
   deleteCartItem({ id, color });
   displayCartTotal();
@@ -73,8 +73,8 @@ const handleDeleteButton = (e) => {
 
 // Get selected item and new quantity then update it in cart
 const handleQuantityInput = (e) => {
-  const selectedItem = e.target.closest('[data-id]');
-  const { id, color } = selectedItem.dataset;
+  const selectedItemElem = e.target.closest('[data-id]');
+  const { id, color } = selectedItemElem.dataset;
   const quantity = Math.min(Math.max(+e.target.value, 1), 100);
 
   e.target.previousElementSibling.textContent = `Qté : ${quantity}`;
@@ -108,24 +108,26 @@ const createCartItem = ({ _id, name, color, price, quantity, imageUrl, altTxt })
   </article>
 `;
 
-// Show cart items on page
+// Display cart items
 const displayCart = async () => {
   try {
     cart = await Promise.all(cart.map(async (item) => getCartItemData(item)));
 
-    container.innerHTML = cart.map(createCartItem).join(' ');
+    cartElem.innerHTML = cart.map(createCartItem).join('');
 
     displayCartTotal();
 
-    const deleteButtons = document.querySelectorAll('.deleteItem');
-    deleteButtons.forEach((button) => button.addEventListener('click', handleDeleteButton));
+    const deleteButtonElems = document.querySelectorAll('.deleteItem');
+    deleteButtonElems.forEach((elem) => elem.addEventListener('click', handleDeleteButton));
 
-    const quantityInputs = document.querySelectorAll('.itemQuantity');
-    quantityInputs.forEach((input) => input.addEventListener('input', handleQuantityInput));
+    const quantityInputElems = document.querySelectorAll('.itemQuantity');
+    quantityInputElems.forEach((elem) => elem.addEventListener('input', handleQuantityInput));
   } catch (e) {
-    container.innerHTML = `<p class="alert">${e.message}</p>`;
+    cartElem.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
+
+displayCart();
 
 // Post an order to API
 const postOrder = async (order) => {
@@ -146,11 +148,11 @@ const postOrder = async (order) => {
 const getOrderData = () => {
   const products = cart.map((i) => i._id);
   const contact = {
-    firstName: firstNameInput.value.trim(),
-    lastName: lastNameInput.value.trim(),
-    address: addressInput.value.trim(),
-    city: cityInput.value.trim(),
-    email: emailInput.value.trim(),
+    firstName: firstNameInputElem.value.trim(),
+    lastName: lastNameInputElem.value.trim(),
+    address: addressInputElem.value.trim(),
+    city: cityInputElem.value.trim(),
+    email: emailInputElem.value.trim(),
   };
   return { products, contact };
 };
@@ -172,19 +174,19 @@ const sendOrder = async () => {
 };
 
 // Validate form then send order
-const handleOrderForm = (e) => {
+const handleorderFormElem = (e) => {
   e.preventDefault();
 
-  const inputs = Array.from(e.target.querySelectorAll('input:not([type=submit])'));
-  const hasErrors = inputs.map((i) => Boolean(i.dataset.error)).includes(true);
+  const inputElems = Array.from(e.target.querySelectorAll('input:not([type=submit])'));
+  const hasErrors = inputElems.map((i) => i.valid).includes(false);
 
   if (hasErrors) return;
 
   sendOrder();
 };
 
-// Input validation rules
-const validation = {
+// Input validation schemas
+const schemas = {
   letters: {
     regex: /^[A-Za-zÀ-ÿ-' ]{3,}$/g,
     message: 'Minimum 3 caractères, lettres uniquement',
@@ -199,27 +201,28 @@ const validation = {
   },
 };
 
-// Validate an input and show message if error
-const validateInput = (e, rule) => {
-  const input = e.target;
-  const value = input.value.trim();
-  const inputError = input.nextElementSibling;
+// Validate an input and display message if error
+const validateInput = (e, schema) => {
+  const inputElem = e.target;
+  const inputErrorElem = inputElem.nextElementSibling;
+  const inputValue = inputElem.value.trim();
 
-  if (!value.match(rule.regex)) {
-    input.dataset.error = true;
-    inputError.textContent = rule.message;
-    return;
+  let isValid = false;
+  let errorMessage = schema.message;
+
+  if (inputValue && inputValue.match(schema.regex)) {
+    isValid = true;
+    errorMessage = '';
   }
 
-  delete input.dataset.error;
-  inputError.textContent = '';
+  inputElem.valid = isValid;
+  inputErrorElem.textContent = errorMessage;
 };
 
 // Events
-document.addEventListener('DOMContentLoaded', displayCart);
-orderForm.addEventListener('submit', handleOrderForm);
-firstNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
-lastNameInput.addEventListener('input', (e) => validateInput(e, validation.letters));
-addressInput.addEventListener('input', (e) => validateInput(e, validation.lettersDigits));
-cityInput.addEventListener('input', (e) => validateInput(e, validation.letters));
-emailInput.addEventListener('input', (e) => validateInput(e, validation.email));
+orderFormElem.addEventListener('submit', handleorderFormElem);
+firstNameInputElem.addEventListener('input', (e) => validateInput(e, schemas.letters));
+lastNameInputElem.addEventListener('input', (e) => validateInput(e, schemas.letters));
+addressInputElem.addEventListener('input', (e) => validateInput(e, schemas.lettersDigits));
+cityInputElem.addEventListener('input', (e) => validateInput(e, schemas.letters));
+emailInputElem.addEventListener('input', (e) => validateInput(e, schemas.email));

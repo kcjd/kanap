@@ -1,12 +1,12 @@
 // DOM elements
-const container = document.querySelector('.item');
-const productImage = document.querySelector('.item__img');
-const productName = document.querySelector('#title');
-const productPrice = document.querySelector('#price');
-const productDesc = document.querySelector('#description');
-const colorSelect = document.querySelector('#colors');
-const quantityInput = document.querySelector('#quantity');
-const addButton = document.querySelector('#addToCart');
+const productElem = document.querySelector('.item');
+const imageElem = document.querySelector('.item__img');
+const nameElem = document.querySelector('#title');
+const priceElem = document.querySelector('#price');
+const descriptionElem = document.querySelector('#description');
+const colorSelectElem = document.querySelector('#colors');
+const quantityInputElem = document.querySelector('#quantity');
+const addButtonElem = document.querySelector('#addToCart');
 
 // Get product ID from URL
 const url = new URL(window.location.href);
@@ -32,18 +32,20 @@ const displayProductDetails = async () => {
     const product = await getProduct(productId);
 
     document.title = product.name;
-    productImage.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
-    productName.textContent = product.name;
-    productPrice.textContent = product.price;
-    productDesc.textContent = product.description;
+    imageElem.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
+    nameElem.textContent = product.name;
+    priceElem.textContent = product.price;
+    descriptionElem.textContent = product.description;
 
-    const colorOptions = product.colors.map((color) => `<option value=${color}>${color}</option>`).join(' ');
-    colorSelect.insertAdjacentHTML('beforeend', colorOptions);
+    const colorOptions = product.colors.map((color) => `<option value=${color}>${color}</option>`).join('');
+    colorSelectElem.insertAdjacentHTML('beforeend', colorOptions);
   } catch (e) {
     document.title = e.message;
-    container.innerHTML = `<p class="alert">${e.message}</p>`;
+    productElem.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
+
+displayProductDetails();
 
 // Add a new item to cart or update an existing one
 const addCartItem = ({ id, color, quantity }) => {
@@ -56,24 +58,16 @@ const addCartItem = ({ id, color, quantity }) => {
 };
 
 // Get and validate user selection then add product to cart
-const handleAddButton = () => {
-  const color = colorSelect.value;
-  const quantity = +quantityInput.value;
+const handleaddButton = () => {
+  const color = colorSelectElem.value;
+  const quantity = +quantityInputElem.value;
 
-  if (!color) {
-    alert('Attention, vous devez sélectionner une couleur');
-    return;
-  }
-
-  if (quantity < 1 || quantity > 100) {
-    alert('Attention, vous devez sélectionner une quantité valide (1-100)');
-    return;
-  }
+  if (!color) return alert('Attention, vous devez sélectionner une couleur');
+  if (quantity < 1 || quantity > 100) return alert('Attention, vous devez sélectionner une quantité (1-100)');
 
   addCartItem({ id: productId, color, quantity });
-  alert('Le produit a été ajouté au panier');
+  return alert('Le produit a été ajouté au panier');
 };
 
 // Events
-document.addEventListener('DOMContentLoaded', displayProductDetails);
-addButton.addEventListener('click', handleAddButton);
+addButtonElem.addEventListener('click', handleaddButton);
