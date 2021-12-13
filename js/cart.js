@@ -1,3 +1,6 @@
+import fetchApi from './utils/fetchApi.js';
+import { schemas, validateInput } from './utils/validation.js';
+
 // DOM elements
 const cartElem = document.querySelector('#cart__items');
 const totalQuantityElem = document.querySelector('#totalQuantity');
@@ -12,20 +15,9 @@ const emailInputElem = document.querySelector('#email');
 // Get cart from local storage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-// Get product data from API
-const getProduct = async (id) => {
-  try {
-    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
-    if (!response.ok) throw response;
-    return response.json();
-  } catch (e) {
-    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
-  }
-};
-
 // Get cart item with product data
 const getCartItemData = async ({ _id, color, quantity }) => {
-  const product = await getProduct(_id);
+  const product = await fetchApi(`/products/${_id}`);
   return { ...product, color, quantity };
 };
 
@@ -129,21 +121,6 @@ const displayCart = async () => {
 
 displayCart();
 
-// Post an order to API
-const postOrder = async (order) => {
-  try {
-    const response = await fetch('https://kanap-back.herokuapp.com/api/products/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order),
-    });
-    if (!response.ok) throw response;
-    return response.json();
-  } catch (e) {
-    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
-  }
-};
-
 // Get product IDs from cart and contact information from user input
 const getOrderData = () => {
   const products = cart.map((i) => i._id);
@@ -164,7 +141,7 @@ const sendOrder = async () => {
 
     if (order.products.length < 1) throw Error('Attention, votre panier doit contenir au moins 1 article');
 
-    const { orderId } = await postOrder(order);
+    const { orderId } = await fetchApi('/products/order', { method: 'POST', body: order });
 
     localStorage.removeItem('cart');
     window.location.replace(`confirmation.html?order=${orderId}`);
@@ -183,40 +160,6 @@ const handleorderFormElem = (e) => {
   if (hasErrors) return;
 
   sendOrder();
-};
-
-// Input validation schemas
-const schemas = {
-  letters: {
-    regex: /^[A-Za-zÀ-ÿ-' ]{3,}$/g,
-    message: 'Minimum 3 caractères, lettres uniquement',
-  },
-  lettersDigits: {
-    regex: /^[0-9A-Za-zÀ-ÿ-', ]{3,}$/g,
-    message: 'Minimum 3 caractères, chiffres et lettres uniquement',
-  },
-  email: {
-    regex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-    message: 'Adresse email non valide',
-  },
-};
-
-// Validate an input and display message if error
-const validateInput = (e, schema) => {
-  const inputElem = e.target;
-  const inputErrorElem = inputElem.nextElementSibling;
-  const inputValue = inputElem.value.trim();
-
-  let isValid = false;
-  let errorMessage = schema.message;
-
-  if (inputValue && inputValue.match(schema.regex)) {
-    isValid = true;
-    errorMessage = '';
-  }
-
-  inputElem.valid = isValid;
-  inputErrorElem.textContent = errorMessage;
 };
 
 // Events

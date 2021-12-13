@@ -1,3 +1,5 @@
+import fetchApi from './utils/fetchApi.js';
+
 // DOM elements
 const productElem = document.querySelector('.item');
 const imageElem = document.querySelector('.item__img');
@@ -12,24 +14,10 @@ const addButtonElem = document.querySelector('#addToCart');
 const url = new URL(window.location.href);
 const productId = url.searchParams.get('id') || null;
 
-// Get cart from local storage
-const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-// Get product data from API
-const getProduct = async (id) => {
-  try {
-    const response = await fetch(`https://kanap-back.herokuapp.com/api/products/${id}`);
-    if (!response.ok) throw response;
-    return response.json();
-  } catch (e) {
-    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
-  }
-};
-
 // Display product details
 const displayProductDetails = async () => {
   try {
-    const product = await getProduct(productId);
+    const product = await fetchApi(`/products/${productId}`);
 
     document.title = product.name;
     imageElem.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
@@ -49,6 +37,7 @@ displayProductDetails();
 
 // Add a new item to cart or update an existing one
 const addCartItem = ({ id, color, quantity }) => {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
   const index = cart.findIndex((i) => i._id === id && i.color === color);
 
   if (index !== -1) cart[index].quantity = quantity;
@@ -58,7 +47,7 @@ const addCartItem = ({ id, color, quantity }) => {
 };
 
 // Get and validate user selection then add product to cart
-const handleaddButton = () => {
+const handleAddButton = () => {
   const color = colorSelectElem.value;
   const quantity = +quantityInputElem.value;
 
@@ -70,4 +59,4 @@ const handleaddButton = () => {
 };
 
 // Events
-addButtonElem.addEventListener('click', handleaddButton);
+addButtonElem.addEventListener('click', handleAddButton);

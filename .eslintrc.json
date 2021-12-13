@@ -11,6 +11,7 @@
   "rules": {
     "no-underscore-dangle": ["error", { "allow": ["_id"] }],
     "object-curly-newline": ["error", { "multiline": true }],
-    "no-alert": "off"
+    "no-alert": "off",
+    "import/extensions": ["error", "always"]
   }
 }

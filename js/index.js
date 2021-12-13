@@ -1,19 +1,10 @@
+import fetchApi from './utils/fetchApi.js';
+
 // DOM elements
 const productsElem = document.querySelector('#items');
 
-// Get products data from API
-const getProducts = async () => {
-  try {
-    const response = await fetch('https://kanap-back.herokuapp.com/api/products');
-    if (!response.ok) throw response;
-    return response.json();
-  } catch (e) {
-    throw Error(e.status ? `${e.status} ${e.statusText}` : 'Le serveur ne répond pas');
-  }
-};
-
-// Create product thumb element
-const createProductThumb = ({ _id, name, description, imageUrl, altTxt }) => `
+// Create product card element
+const createProductCard = ({ _id, name, description, imageUrl, altTxt }) => `
   <a href="./product.html?id=${_id}">
     <article>
       <img src=${imageUrl} alt=${altTxt}>
@@ -23,15 +14,15 @@ const createProductThumb = ({ _id, name, description, imageUrl, altTxt }) => `
   </a>
 `;
 
-// Display product list
-const displayProductList = async () => {
+// Display product cards
+const displayProductCards = async () => {
   try {
-    const products = await getProducts();
-    const productThumbs = products.map(createProductThumb).join('');
+    const products = await fetchApi('/products');
+    const productThumbs = products.map(createProductCard).join('');
     productsElem.innerHTML = productThumbs;
   } catch (e) {
     productsElem.innerHTML = `<p class="alert">${e.message}</p>`;
   }
 };
 
-displayProductList();
+displayProductCards();
