@@ -1,15 +1,15 @@
 # Kanap
 
-Projet OpenClassrooms. L'objectif est de créer un site e-commerce en JavaScript.
+Site e-commerce réalisé pour Kanap, entreprise de vente de canapés.
 
-## Spécifications techniques
+👉 https://kcjd.github.io/kanap (API hébergée sur Heroku)
 
-- Les fichiers HTML et CSS des différentes pages sont déjà créés
+## Détails
 
-- Le développement doit se faire en JavaScript pur, sans framework ni librairie
+- Développé en JavaScript, à partir de pages HTML / CSS existantes
 
-- Les données des produits doivent être récupérées à partir de l'API mise à disposition
+- Récupération des informations des produits depuis une API
 
-- Le panier doit être enregistré dans le localStorage
+- Gestion du panier, avec enregistrement dans le localStorage
 
-- Les champs du formulaire de commande doivent être validés avant envoi à l'API
+- Validation du formulaire avant l'envoi d'une commande

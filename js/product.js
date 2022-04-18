@@ -10,6 +10,8 @@ const colorSelectElem = document.querySelector('#colors');
 const quantityInputElem = document.querySelector('#quantity');
 const addButtonElem = document.querySelector('#addToCart');
 
+let product;
+
 // Get product ID from URL
 const url = new URL(window.location.href);
 const productId = url.searchParams.get('id') || null;
@@ -17,7 +19,7 @@ const productId = url.searchParams.get('id') || null;
 // Display product details
 const displayProductDetails = async () => {
   try {
-    const product = await fetchApi(`/products/${productId}`);
+    product = await fetchApi(`/products/${productId}`);
 
     document.title = product.name;
     imageElem.innerHTML = `<img src=${product.imageUrl} alt=${product.altTxt} />`;
@@ -36,12 +38,12 @@ const displayProductDetails = async () => {
 displayProductDetails();
 
 // Add a new item to cart or update an existing one
-const addCartItem = ({ id, color, quantity }) => {
+const addCartItem = ({ _id, name, price, imageUrl, altTxt, color, quantity }) => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const index = cart.findIndex((i) => i._id === id && i.color === color);
+  const index = cart.findIndex((i) => i._id === _id && i.color === color);
 
   if (index !== -1) cart[index].quantity = quantity;
-  else cart.push({ _id: id, color, quantity });
+  else cart.push({ _id, name, price, imageUrl, altTxt, color, quantity });
 
   localStorage.setItem('cart', JSON.stringify(cart));
 };
@@ -54,7 +56,7 @@ const handleAddButton = () => {
   if (!color) return alert('Attention, vous devez sélectionner une couleur');
   if (quantity < 1 || quantity > 100) return alert('Attention, vous devez sélectionner une quantité (1-100)');
 
-  addCartItem({ id: productId, color, quantity });
+  addCartItem({ ...product, color, quantity });
   return alert('Le produit a été ajouté au panier');
 };
 
